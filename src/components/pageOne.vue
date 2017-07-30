@@ -4,7 +4,8 @@
     <router-link to="/"><img :src="infoClose" alt="" class="close"></router-link>
     <div class="use">
       <img :src="infoOneT" alt="" class="title" width="">
-      <img :src="useInput" alt="" class="input">
+      <input type="text" name="" id="" :value="key" class="input" readonly>
+      <!-- <img :src="useInput" alt="" class="input"> -->
       <a href="http://u.163.com/aosoutdtdt1"></a>
     </div>
     <div class="useInfo">
@@ -26,7 +27,8 @@ export default {
       infoClose: infoClose,
       infoOne: infoOne,
       infoOneT: infoOneT,
-      useInput: useInput
+      useInput: useInput,
+      key: 'DSDSDSD56756' // 优惠码
     }
   }
 }
@@ -69,6 +71,11 @@ export default {
       display: inline-block;
       width: 6.533333rem;
       height: 1.013333rem;
+      box-sizing: border-box;
+      border: 1px solid #eee;
+      padding-left: .133333rem;
+      margin-bottom: .106667rem;
+      outline: none;
     }
     a{
       display: inline-block;
