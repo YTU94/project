@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import api from '../fetch/api'
 import infoBack from '../assets/image/info_back.png'
 import infoClose from '../assets/image/info_close.png'
 import infoOne from '../assets/image/info_one.png'
@@ -30,6 +31,16 @@ export default {
       useInput: useInput,
       key: 'DSDSDSD56756' // 优惠码
     }
+  },
+  beforeMount: function () {
+    api.getOne()
+      .then(res => {
+        console.log(res)
+        this.key = res[1][1]
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 </script>

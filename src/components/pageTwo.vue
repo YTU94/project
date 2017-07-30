@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import api from '../fetch/api'
 import infoBack from '../assets/image/info_back.png'
 import infoClose from '../assets/image/info_close.png'
 import infoTwo from '../assets/image/info_two.png'
@@ -30,6 +31,16 @@ export default {
       useInput: useInput,
       key: ''
     }
+  },
+  beforeMount: function () {
+    api.getTwo()
+      .then(res => {
+        console.log(res)
+        this.key = res[1][1]
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 </script>

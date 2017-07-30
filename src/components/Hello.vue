@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <!-- <h1 @click="login()">login</h1> -->
     <transition name="slide-fade-left" mode="out-in">
       <div class="pic1" v-if="show"><img :src="img1" alt="交投" width="100%" height="100%"></div>
     </transition>
@@ -13,7 +14,7 @@
       <div class="pic4" v-if="show"><img :src="img4" alt="惠青年" width="100%" height="100%"></div>
     </transition>
     <transition name="slide-fade-bottom">
-      <div class="pic5" v-if="show"><img :src="img5" alt="盛夏嗨翻天" width="100%" height="100%"></div>
+      <div class="pic5" v-if="show"><img :src="imgFive" alt="盛夏嗨翻天" width="100%" height="100%"></div>
     </transition>
     <div class="pic6 run-lb-enter-active"><img :src="img6" alt="长颈鹿" width="100%" height="100%"></div>
     <div class="pic7"><img :src="img7" alt="网易严选" class="" width="100%" height="100%"></div>
@@ -29,12 +30,14 @@
 </template>
 
 <script>
+import api from '../fetch/api'
+import store from '../store/store'
 import homeBg from '../assets/image/home/home_bg.png'
 import img1 from '../assets/image/home/img1.png'
 import img2 from '../assets/image/home/img2.png'
 import img3 from '../assets/image/home/img3.png'
 import img4 from '../assets/image/home/img4.png'
-import img5 from '../assets/image/home/img5.png'
+import imgFive from '../assets/image/home/img5.png'
 import img6 from '../assets/image/home/img6.png'
 import img7 from '../assets/image/home/img7.png'
 import img8 from '../assets/image/home/img8.png'
@@ -46,13 +49,15 @@ export default {
   name: 'hello',
   data () {
     return {
+      uid: '',
+      token: '',
       show: false,
       homeBg: homeBg,
       img1: img1,
       img2: img2,
       img3: img3,
       img4: img4,
-      img5: img5,
+      imgFive: imgFive,
       img6: img6,
       img7: img7,
       img8: img8,
@@ -65,6 +70,44 @@ export default {
   },
   mounted: function () {
     this.show = true
+    let url = window.location.href // 当前url
+    let re = /d=[0-9]*/gi // uid正则
+    let reg = /n=[a-zA-Z0-9]*/gi // token正则
+    let uid = re.exec(url) || ''
+    if (uid === '' && this.$store.state.uid === '') {
+      // show unLogin
+      this.loginStatus = true
+      console.log('未登录')
+      this.login()
+    } else if (this.$store.state.uid !== '') {
+      console.log('成功登陆')
+      // hide unLogin
+      this.loginStatus = false
+    } else {
+      // get weixinUser uid and token
+      this.uid = uid.join().substring(2)
+      this.token = reg.exec(url).join().substring(2)
+      // 向store中存入uid token
+      store.commit('setUid', this.uid)
+      store.commit('setToken', this.token)
+      console.log('已登录' + 'uid=>' + this.uid + '|' + 'token=>' + this.token)
+      // hide unLogin
+      this.loginStatus = false
+    }
+  },
+  beforeMount: function () {
+  },
+  methods: {
+    login: function () {
+      api.Login()
+        .then(res => {
+          console.log(res)
+          window.location.href = res[1]
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
   }
 }
 </script>
