@@ -29,15 +29,6 @@
         <router-link to="/pageTwo" class="scale-enter-active"></router-link>
       </p>
     </div>
-      <!-- model 模态框 -->
-    <div class="modelS" v-if="model === 1"></div>
-    <div v-if="model === 1" class="model">
-      <div style="font-size: 20px;border-bottom: 1px solid #eee;padding-bottom: .2rem;">温馨提示</div>
-      <div style="padding: .1rem 0;">你已经领过优惠券了</div>
-      <p v-if="yhj !== ''">优惠卷：{{yhj}}</p>
-      <p v-if="allyhj !== ''">优惠卷：{{allyhj}}</p>
-      <p><span @click="model = 0">关闭</span></p>
-    </div>
   </div>
 </template>
 
@@ -64,7 +55,6 @@ export default {
       uid: '',
       token: '',
       show: false,
-      model: 0,
       yhj: '',
       allYhj: '',
       // 图片
@@ -95,7 +85,6 @@ export default {
       this.login()
     } else if (this.$store.state.uid !== '') {
       console.log('成功登陆')
-      this.check()
     } else {
       // get weixinUser uid and token
       this.uid = uid.join().substring(2)
@@ -104,7 +93,6 @@ export default {
       store.commit('setUid', this.uid)
       store.commit('setToken', this.token)
       console.log('已登录' + 'uid=>' + this.uid + '|' + 'token=>' + this.token)
-      this.check()
     }
   },
   beforeMount: function () {
@@ -116,30 +104,6 @@ export default {
           console.log(res)
           console.log('check-Success')
           window.location.href = res[1]
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-    check: function () {
-      api.getInfo('get_user', this.$store.state.uid)
-        .then(res => {
-          console.log(res)
-          debugger
-          if (parseInt(res[1].yhj_id) > 0) {
-            console.log('85-已领取')
-            this.model = 1
-            this.yhj = res[1].yhj.name
-          } else {
-            console.log('85-未领取')
-          }
-          if (parseInt(res[1].allyhj_id) > 0) {
-            console.log('商品卷-已领取')
-            this.model = 1
-            this.allyhj = res[1].allyhj.name
-          } else {
-            console.log('商品卷-未领取')
-          }
         })
         .catch(error => {
           console.log(error)
@@ -351,33 +315,5 @@ export default {
     text-decoration: none;
   }
 }
-// model
-.modelS{
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: #333;
-  opacity: .4;
-  z-index: 1000;
-}
-.model{
-  position: fixed;
-  left: 1.5rem;
-  top: 5rem; 
-  z-index: 1001;
-  width: 7rem;
-  background: #fff;
-  border-radius: 5px;
-  padding: .3rem 0;
-  p{
-    padding: .2rem;
-    font-size: 14px;
-    span{
-      padding: 0.1rem 0.3rem;
-      border: 1px solid #efedef;
-      border-radius: 5px;
-      color: #aaa;
-    }
-  }
-}
+
 </style>
