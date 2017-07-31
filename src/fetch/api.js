@@ -49,13 +49,23 @@ export default {
 
   // 微信登录
   Login (parmas) {
-    return fetch('http://lewo.youledi.cn/user.php?func=login', parmas)
+    return fetch('/api/user.php?func=login', parmas)
   },
   getOne (parmas) {
-    return fetch('http://lewo.youledi.cn/user.php?func=get_yhj', parmas)
+    return fetch('/api/user.php?func=get_yhj', parmas)
   },
   getTwo (parmas) {
-    return fetch('http://lewo.youledi.cn/user.php?func=get_allyhj ', parmas)
+    return fetch('/api/user.php?func=get_allyhj ', parmas)
+  },
+  getInfo (func, uid) {
+    return fetch('/api/user.php', {func: func, uid: uid})
+  },
+  addYhj (func, uid, yid) {
+    return fetch('/api/user.php', {func: func, uid: uid, yid: yid})
+  },
+  addAllYhj (func, uid, yid) {
+    return fetch('/api/user.php', {func: func, uid: uid, yid: yid})
   }
+
 }
 

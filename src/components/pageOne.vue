@@ -5,7 +5,6 @@
     <div class="use">
       <img :src="infoOneT" alt="" class="title" width="">
       <input type="text" name="" id="" :value="key" class="input" readonly>
-      <!-- <img :src="useInput" alt="" class="input"> -->
       <a href="http://u.163.com/aosoutdtdt1"></a>
     </div>
     <div class="useInfo">
@@ -16,6 +15,7 @@
 
 <script>
 import api from '../fetch/api'
+import store from '../store/store'
 import infoBack from '../assets/image/info_back.png'
 import infoClose from '../assets/image/info_close.png'
 import infoOne from '../assets/image/info_one.png'
@@ -24,6 +24,7 @@ import useInput from '../assets/image/use_input.png'
 export default {
   data () {
     return {
+      yid: '',
       infoBack: infoBack,
       infoClose: infoClose,
       infoOne: infoOne,
@@ -37,10 +38,21 @@ export default {
       .then(res => {
         console.log(res)
         this.key = res[1][1]
+        store.commit('setYhj', this.key)
+        this.yid = res[1][0]
+        api.addYhj('add_yhj', this.$store.state.uid, this.yid)
+          .then(res => {
+            console.log('add_yhj')
+          })
+          .catch(error => {
+            console.log(error)
+          })
       })
       .catch(error => {
         console.log(error)
       })
+  },
+  mounted: function () {
   }
 }
 </script>
@@ -56,6 +68,7 @@ export default {
     top: .36rem;
     width: 1.706667rem;
     height: .746667rem;
+    display: inline-block;
   }
   .back{
     left: .453333rem;

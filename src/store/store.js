@@ -5,7 +5,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     uid: '',
-    token: ''
+    token: '',
+    yhj: '',
+    allyhj: ''
   },
   mutations: {
     setUid (state, v) {
@@ -13,6 +15,12 @@ export default new Vuex.Store({
     },
     setToken (state, v) {
       state.token = v
+    },
+    setYhj (state, v) {
+      state.yhj = v
+    },
+    setAllYhj (state, v) {
+      state.allyhj = v
     }
   }
 })

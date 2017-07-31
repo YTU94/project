@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <!-- <h1 @click="login()">login</h1> -->
     <transition name="slide-fade-left" mode="out-in">
       <div class="pic1" v-if="show"><img :src="img1" alt="交投" width="100%" height="100%"></div>
     </transition>
@@ -8,23 +7,36 @@
       <div class="pic2 run-enter-active"><img :src="img2" alt="耳机" width="100%" height="100%"></div>
     </transition>
     <transition name="scale">
-      <div class="pic3" v-if="show"><img :src="img3" alt="三根草" width="100%" height="100%"></div>
+      <div class="pic3 text-animation" v-if="show"><img :src="img3" alt="三根草" width="100%" height="100%"></div>
     </transition>
     <transition name="slide-fade-right">
-      <div class="pic4" v-if="show"><img :src="img4" alt="惠青年" width="100%" height="100%"></div>
+      <div class="pic4 run-enter-active" v-if="show"><img :src="img4" alt="惠青年" width="100%" height="100%"></div>
     </transition>
     <transition name="slide-fade-bottom">
-      <div class="pic5" v-if="show"><img :src="imgFive" alt="盛夏嗨翻天" width="100%" height="100%"></div>
+      <div class="pic5 text-animation" v-if="show"><img :src="imgFive" alt="盛夏嗨翻天" width="100%" height="100%"></div>
     </transition>
     <div class="pic6 run-lb-enter-active"><img :src="img6" alt="长颈鹿" width="100%" height="100%"></div>
-    <div class="pic7"><img :src="img7" alt="网易严选" class="" width="100%" height="100%"></div>
+    <div class="pic7 text-animation"><img :src="img7" alt="网易严选" class="" width="100%" height="100%"></div>
     <div class="pic8">
       <img :src="img8" alt="" width="100%" height="100%">
-      <router-link to="/pageOne" class="scale-enter-active"></router-link>
+      <p>
+        <router-link to="/pageOne" class="scale-enter-active"></router-link>
+      </p>
     </div>
     <div class="pic9">
       <img :src="img9" alt="" width="100%" height="100%">
-      <router-link to="/pageTwo" class="scale-enter-active"></router-link>      
+      <p>
+        <router-link to="/pageTwo" class="scale-enter-active"></router-link>
+      </p>
+    </div>
+      <!-- model 模态框 -->
+    <div class="modelS" v-if="model === 1"></div>
+    <div v-if="model === 1" class="model">
+      <div style="font-size: 20px;border-bottom: 1px solid #eee;padding-bottom: .2rem;">温馨提示</div>
+      <div style="padding: .1rem 0;">你已经领过优惠券了</div>
+      <p v-if="yhj !== ''">优惠卷：{{yhj}}</p>
+      <p v-if="allyhj !== ''">优惠卷：{{allyhj}}</p>
+      <p><span @click="model = 0">关闭</span></p>
     </div>
   </div>
 </template>
@@ -52,6 +64,10 @@ export default {
       uid: '',
       token: '',
       show: false,
+      model: 0,
+      yhj: '',
+      allYhj: '',
+      // 图片
       homeBg: homeBg,
       img1: img1,
       img2: img2,
@@ -75,14 +91,11 @@ export default {
     let reg = /n=[a-zA-Z0-9]*/gi // token正则
     let uid = re.exec(url) || ''
     if (uid === '' && this.$store.state.uid === '') {
-      // show unLogin
-      this.loginStatus = true
       console.log('未登录')
       this.login()
     } else if (this.$store.state.uid !== '') {
       console.log('成功登陆')
-      // hide unLogin
-      this.loginStatus = false
+      this.check()
     } else {
       // get weixinUser uid and token
       this.uid = uid.join().substring(2)
@@ -91,8 +104,7 @@ export default {
       store.commit('setUid', this.uid)
       store.commit('setToken', this.token)
       console.log('已登录' + 'uid=>' + this.uid + '|' + 'token=>' + this.token)
-      // hide unLogin
-      this.loginStatus = false
+      this.check()
     }
   },
   beforeMount: function () {
@@ -102,7 +114,32 @@ export default {
       api.Login()
         .then(res => {
           console.log(res)
+          console.log('check-Success')
           window.location.href = res[1]
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    check: function () {
+      api.getInfo('get_user', this.$store.state.uid)
+        .then(res => {
+          console.log(res)
+          debugger
+          if (parseInt(res[1].yhj_id) > 0) {
+            console.log('85-已领取')
+            this.model = 1
+            this.yhj = res[1].yhj.name
+          } else {
+            console.log('85-未领取')
+          }
+          if (parseInt(res[1].allyhj_id) > 0) {
+            console.log('商品卷-已领取')
+            this.model = 1
+            this.allyhj = res[1].allyhj.name
+          } else {
+            console.log('商品卷-未领取')
+          }
         })
         .catch(error => {
           console.log(error)
@@ -129,6 +166,9 @@ export default {
 }
 .scale-enter-active {
   animation: scale 1.0s linear .9s infinite alternate;
+}
+.text-animation {
+  animation: textA 1.2s linear 1.0s infinite alternate;
 }
 .slide-fade-left-enter {
   transform: translateX(-50px);
@@ -187,6 +227,28 @@ export default {
   }
   100% {
     transform: scale(1)
+  }
+}
+@keyframes textA {
+  0% {
+    transform: scale(1);
+    opacity: 1
+  }
+  25% {
+    transform: scale(.95);
+    opacity: .6
+  }
+  50% { 
+    transform: scale(1.05);
+    opacity: 1
+  }
+  75% {
+    transform: scale(1);
+    opacity: 1
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1
   }
 }
 .home{
@@ -253,7 +315,7 @@ export default {
     box-sizing: border-box;
     padding-top: 1.066667rem;
     img{
-      width: 7.36rem;
+      width: 6.026667rem;
       height: 1.653333rem;
     }
     a{
@@ -287,6 +349,35 @@ export default {
   }
   a{
     text-decoration: none;
+  }
+}
+// model
+.modelS{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #333;
+  opacity: .4;
+  z-index: 1000;
+}
+.model{
+  position: fixed;
+  left: 1.5rem;
+  top: 5rem; 
+  z-index: 1001;
+  width: 7rem;
+  background: #fff;
+  border-radius: 5px;
+  padding: .3rem 0;
+  p{
+    padding: .2rem;
+    font-size: 14px;
+    span{
+      padding: 0.1rem 0.3rem;
+      border: 1px solid #efedef;
+      border-radius: 5px;
+      color: #aaa;
+    }
   }
 }
 </style>
