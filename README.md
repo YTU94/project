@@ -1,6 +1,6 @@
 # wangyiyanxuan
 
-> A Vue.js project
+> 一个简单的H5活动页面，其实就加了些微信的wx-js-sdk的分享链接，css3的动画，H5的音频api
 
 ## Build Setup
 
